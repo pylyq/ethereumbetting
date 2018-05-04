@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import MultiNumberBettingV7Contract from '../build/contracts/MultiNumberBettingV7.json';
 import getWeb3 from './utils/getWeb3';
 
+import MessageInput from './MessageInput';
+
 import './css/oswald.css';
 import './css/open-sans.css';
 import './css/pure-min.css';
@@ -129,6 +131,25 @@ class App extends Component {
     });
   }
 
+  submitMessage (message1, 2, 3.....) {
+    let contractInstance = this.state.ContractInstance;
+
+    return contractInstance.guess(message1, message2, {from:bills_address, value:web3.toWei(message3,'ether')});
+
+    // this can all be done more elegantly
+    // return multi_number_betting_v7.guess(8, "Bill", {from:bills_address, value:web3.toWei(3,'ether')});
+    /*
+    // import solidity function from smart contract instance
+    const { interact } = this.state.ContractInstance;
+    // interact with solidity contract
+    interact (message, (err, result) => {
+        // log message to console
+        console.log('Message is being added...');
+      }
+    )
+    */
+  }
+
   render() {
     return (
       <div className="App">
@@ -145,6 +166,7 @@ class App extends Component {
               <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
               <p>Try changing the value stored on <strong>line 59</strong> of App.js.</p>
               <p>The stored value is: {this.state.storageValue}</p>
+              <MessageInput onSubmit={ this.submitMessage } />
             </div>
           </div>
         </main>
