@@ -67,6 +67,62 @@ class App extends Component {
     })
   }
 
+  /*
+  instantiateContract() {
+
+    const contract = require('truffle-contract');
+    const calculatorV3 = contract(CalculatorV3Contract);
+    calculatorV3.setProvider(this.state.web3.currentProvider);
+
+    // Declaring this for later so we can chain functions on.
+    let calculatorV3Instance;
+
+    // Get accounts.
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      calculatorV3.deployed().then((instance) => {
+        calculatorV3Instance = instance;
+        return this.setState({ ContractInstance: calculatorV3Instance });
+      }).then(() => {
+        return this.doContractEventWatchStart();
+      }).then(() => {
+        return calculatorV3Instance.result();
+      }).then((result) => {
+        // Update state with the result.
+        return this.setState({ total: result.c[0].toString() });
+      })
+    })
+  }
+
+  // watch for smart contract events
+  doContractEventWatchStart() {
+    // store state contract instance in a seperate new variable
+    let contractInstance = this.state.ContractInstance;
+
+    // save all logs irrespective of input values
+    let indexedEventValues = {
+
+    }
+    // start from this block since the first event happens shortly thereafter
+    // for Ganache leave blank
+    let additionalFilterOptions = {
+      //"fromBlock":"2950000"
+    }
+    // contract event definition
+    let contractEvent = contractInstance.NewTotal(indexedEventValues, additionalFilterOptions);
+
+    // web3 contract watch callback function
+    contractEvent.watch((error, result) => {
+      if(error) {
+        console.error('Contract Event Error');
+      } else {
+        // set the total state variable to newly captured log
+        console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
+        this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
+      }
+    });
+  }
+  */
+
   render() {
     return (
       <div className="App">
