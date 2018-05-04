@@ -59,6 +59,13 @@ class App extends Component {
     })
   }
 
+  // watch for smart contract events
+  doContractEventWatchStart() {
+    // store state contract instance in a seperate new variable
+    let contractInstance = this.state.ContractInstance;
+
+    // save all logs irrespective of input values
+    let indexedEventValues = {
   /*
   instantiateContract() {
 
@@ -84,15 +91,7 @@ class App extends Component {
       })
     })
   }
-
-  // watch for smart contract events
-  doContractEventWatchStart() {
-    // store state contract instance in a seperate new variable
-    let contractInstance = this.state.ContractInstance;
-
-    // save all logs irrespective of input values
-    let indexedEventValues = {
-
+  */
     }
     // start from this block since the first event happens shortly thereafter
     // for Ganache leave blank
@@ -100,20 +99,35 @@ class App extends Component {
       //"fromBlock":"2950000"
     }
     // contract event definition
-    let contractEvent = contractInstance.NewTotal(indexedEventValues, additionalFilterOptions);
+    //let contractEvent = contractInstance.NewTotal(indexedEventValues, additionalFilterOptions);
+    //event WinningBet(address indexed addr, string name, uint amount);
+    //event LosingBet(address indexed addr, string name, uint amount);
+    let winningEvent = contractInstance.WinningBet(indexedEventValues, additionalFilterOptions);
+    let losingEvent = contractInstance.LosingBet(indexedEventValues, additionalFilterOptions);
 
     // web3 contract watch callback function
-    contractEvent.watch((error, result) => {
+    winningEvent.watch((error, result) => {
       if(error) {
-        console.error('Contract Event Error');
+        console.error('Winning Event Error');
       } else {
+        // figure out what to change this to later
         // set the total state variable to newly captured log
-        console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
-        this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
+        //console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
+        //this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
+      }
+    });
+
+    losingEvent.watch((error, result) => {
+      if(error) {
+        console.error('Losing Event Error');
+      } else {
+        // figure out what to change this to later
+        // set the total state variable to newly captured log
+        //console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
+        //this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
       }
     });
   }
-  */
 
   render() {
     return (
