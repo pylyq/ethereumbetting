@@ -18,6 +18,8 @@ class App extends Component {
       web3: null,
       loserCount: 0,
       winnerCount: 0,
+      //lastWinnerAt: null,
+      winner: null,
     }
     // biiiiind error fixed
     this.submitBet = this.submitBet.bind(this);
@@ -71,6 +73,12 @@ class App extends Component {
       }).then((result) => {
         // watch for contract events
         return this.setState({ winnerCount: result.toNumber() });
+      }).then(() => {
+        // watch for contract events
+        return bettingInstance.winner();
+      }).then((result) => {
+        // watch for contract events
+        return this.setState({ winner: result });
       }) // figure out what to chain on to this part later
     })
   }
@@ -126,6 +134,8 @@ class App extends Component {
   submitBet (guess, name, betValue) {
     console.log('winner count: ', this.state.winnerCount);
     console.log('loser count: ', this.state.loserCount);
+    //console.log('last win at: ', this.state.lastWinnerAt);
+    console.log('last winner: ', this.state.winner);
     // save to seperate variable
     const contractInstance = this.state.ContractInstance;
     // pull account from web3 state variable
