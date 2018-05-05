@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-//import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
 import MultiNumberBettingV7Contract from '../build/contracts/MultiNumberBettingV7.json';
 import getWeb3 from './utils/getWeb3';
-
 import BetInput from './BetInput';
 
 import './css/oswald.css';
@@ -16,9 +14,11 @@ class App extends Component {
 
     this.state = {
       ContractInstance: null,
-      storageValue: 0,
+      //storageValue: 0,
       web3: null
     }
+    // biiiiind error fixed
+    this.submitBet = this.submitBet.bind(this);
   }
 
   componentWillMount() {
@@ -68,32 +68,7 @@ class App extends Component {
 
     // save all logs irrespective of input values
     let indexedEventValues = {
-  /*
-  instantiateContract() {
 
-    const contract = require('truffle-contract');
-    const calculatorV3 = contract(CalculatorV3Contract);
-    calculatorV3.setProvider(this.state.web3.currentProvider);
-
-    // Declaring this for later so we can chain functions on.
-    let calculatorV3Instance;
-
-    // Get accounts.
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      calculatorV3.deployed().then((instance) => {
-        calculatorV3Instance = instance;
-        return this.setState({ ContractInstance: calculatorV3Instance });
-      }).then(() => {
-        return this.doContractEventWatchStart();
-      }).then(() => {
-        return calculatorV3Instance.result();
-      }).then((result) => {
-        // Update state with the result.
-        return this.setState({ total: result.c[0].toString() });
-      })
-    })
-  }
-  */
     }
     // start from this block since the first event happens shortly thereafter
     // for Ganache leave blank
@@ -112,6 +87,7 @@ class App extends Component {
       if(error) {
         console.error('Winning Event Error');
       } else {
+        console.log('event won');
         // figure out what to change this to later
         // set the total state variable to newly captured log
         //console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
@@ -123,6 +99,7 @@ class App extends Component {
       if(error) {
         console.error('Losing Event Error');
       } else {
+        console.log('event lost');
         // figure out what to change this to later
         // set the total state variable to newly captured log
         //console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
@@ -132,13 +109,16 @@ class App extends Component {
   }
 
   submitBet (guess, name, betValue) {
-    //let contractInstance = this.state.ContractInstance;
+    const contractInstance = this.state.ContractInstance;
+
     console.log('guess is:', guess);
     console.log('name is:', name);
     console.log('bet value is:', betValue);
-
-    //return contractInstance.guess(message1, {from:bills_address, value:web3.toWei(message3,'ether')});
-
+    console.log(contractInstance);
+    // pull account from web3 state variable
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      contractInstance.guess(guess, name, { from:accounts[0], value:this.state.web3.toWei(betValue,'ether') });
+    })
     // this can all be done more elegantly
     // return multi_number_betting_v7.guess(8, "Bill", {from:bills_address, value:web3.toWei(3,'ether')});
     /*
