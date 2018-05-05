@@ -19,7 +19,8 @@ class App extends Component {
       loserCount: 0,
       winnerCount: 0,
       //lastWinnerAt: null,
-      winner: null,
+      lastWinner: null,
+      lastTx: null,
     }
     // biiiiind error fixed
     this.submitBet = this.submitBet.bind(this);
@@ -78,7 +79,7 @@ class App extends Component {
         return bettingInstance.winner();
       }).then((result) => {
         // save to state
-        return this.setState({ winner: result });
+        return this.setState({ lastWinner: result });
       }) // figure out what to chain on to this part later
     })
   }
@@ -114,6 +115,7 @@ class App extends Component {
         // set the total state variable to newly captured log
         //console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
         //this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
+        this.setState({ lastTx: result });
         console.log("event won: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
       }
     });
@@ -126,6 +128,8 @@ class App extends Component {
         // figure out what to change this to later
         // set the total state variable to newly captured log
         console.log("event lost: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
+        //console.log(result);
+        this.setState({ lastTx: result });
         //this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
       }
     });
@@ -135,7 +139,8 @@ class App extends Component {
     //console.log('winner count: ', this.state.winnerCount);
     //console.log('loser count: ', this.state.loserCount);
     //console.log('last win at: ', this.state.lastWinnerAt);
-    console.log('last winner: ', this.state.winner);
+    //console.log('last winner: ', this.state.winner);
+    console.log('last result: ', this.state.lastTx);
     // save to seperate variable
     const contractInstance = this.state.ContractInstance;
     // pull account from web3 state variable
@@ -145,8 +150,12 @@ class App extends Component {
     })
   }
 
+  displayResult () {
+
+  }
+
   renderLastWinner () {
-    return <h1>Last winner: { this.state.winner }</h1>;
+    return <h1>Last winner: { this.state.lastWinner }</h1>;
   }
 
   render() {
