@@ -62,22 +62,22 @@ class App extends Component {
         // watch for contract events
         return this.doContractEventWatchStart();
       }).then(() => {
-        // watch for contract events
+        // get loser count
         return bettingInstance.loserCount();
       }).then((result) => {
-        // watch for contract events
+        // set to state
         return this.setState({ loserCount: result.toNumber() });
       }).then(() => {
-        // watch for contract events
+        // get winner count
         return bettingInstance.winnerCount();
       }).then((result) => {
-        // watch for contract events
+        // save to state
         return this.setState({ winnerCount: result.toNumber() });
       }).then(() => {
-        // watch for contract events
+        // get last winner from solidty contract
         return bettingInstance.winner();
       }).then((result) => {
-        // watch for contract events
+        // save to state
         return this.setState({ winner: result });
       }) // figure out what to chain on to this part later
     })
@@ -132,8 +132,8 @@ class App extends Component {
   }
 
   submitBet (guess, name, betValue) {
-    console.log('winner count: ', this.state.winnerCount);
-    console.log('loser count: ', this.state.loserCount);
+    //console.log('winner count: ', this.state.winnerCount);
+    //console.log('loser count: ', this.state.loserCount);
     //console.log('last win at: ', this.state.lastWinnerAt);
     console.log('last winner: ', this.state.winner);
     // save to seperate variable
@@ -143,6 +143,10 @@ class App extends Component {
       // call method on contract instance stored in state
       contractInstance.guess(guess, name, { from:accounts[0], value:this.state.web3.toWei(betValue,'ether') });
     })
+  }
+
+  renderLastWinner () {
+    return <h1>Last winner: { this.state.winner }</h1>;
   }
 
   render() {
@@ -160,6 +164,7 @@ class App extends Component {
               <h2>Curabitur interdum suscipit rutrum</h2>
               <p>Fusce mauris ipsum, finibus sed aliquet at, molestie quis mi. Aliquam in.</p>
               <BetInput onSubmit={ this.submitBet } />
+              { this.renderLastWinner() }
             </div>
           </div>
         </main>
