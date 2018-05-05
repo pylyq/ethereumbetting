@@ -87,11 +87,12 @@ class App extends Component {
       if(error) {
         console.error('Winning Event Error');
       } else {
-        console.log('event won');
+        //console.log('event won');
         // figure out what to change this to later
         // set the total state variable to newly captured log
         //console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
         //this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
+        console.log("event won: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
       }
     });
 
@@ -99,38 +100,23 @@ class App extends Component {
       if(error) {
         console.error('Losing Event Error');
       } else {
-        console.log('event lost');
+        //console.log('event lost');
         // figure out what to change this to later
         // set the total state variable to newly captured log
-        //console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
+        console.log("event lost: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
         //this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
       }
     });
   }
 
   submitBet (guess, name, betValue) {
+    // save to seperate variable
     const contractInstance = this.state.ContractInstance;
-
-    console.log('guess is:', guess);
-    console.log('name is:', name);
-    console.log('bet value is:', betValue);
-    console.log(contractInstance);
     // pull account from web3 state variable
     this.state.web3.eth.getAccounts((error, accounts) => {
+      // call method on contract instance stored in state
       contractInstance.guess(guess, name, { from:accounts[0], value:this.state.web3.toWei(betValue,'ether') });
     })
-    // this can all be done more elegantly
-    // return multi_number_betting_v7.guess(8, "Bill", {from:bills_address, value:web3.toWei(3,'ether')});
-    /*
-    // import solidity function from smart contract instance
-    const { interact } = this.state.ContractInstance;
-    // interact with solidity contract
-    interact (message, (err, result) => {
-        // log message to console
-        console.log('Message is being added...');
-      }
-    )
-    */
   }
 
   render() {
