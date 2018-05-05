@@ -15,7 +15,9 @@ class App extends Component {
     this.state = {
       ContractInstance: null,
       //storageValue: 0,
-      web3: null
+      web3: null,
+      loserCount: 0,
+      winnerCount: 0,
     }
     // biiiiind error fixed
     this.submitBet = this.submitBet.bind(this);
@@ -57,6 +59,18 @@ class App extends Component {
       }).then(() => {
         // watch for contract events
         return this.doContractEventWatchStart();
+      }).then(() => {
+        // watch for contract events
+        return bettingInstance.loserCount();
+      }).then((result) => {
+        // watch for contract events
+        return this.setState({ loserCount: result.toNumber() });
+      }).then(() => {
+        // watch for contract events
+        return bettingInstance.winnerCount();
+      }).then((result) => {
+        // watch for contract events
+        return this.setState({ winnerCount: result.toNumber() });
       }) // figure out what to chain on to this part later
     })
   }
@@ -110,6 +124,8 @@ class App extends Component {
   }
 
   submitBet (guess, name, betValue) {
+    console.log('winner count: ', this.state.winnerCount);
+    console.log('loser count: ', this.state.loserCount);
     // save to seperate variable
     const contractInstance = this.state.ContractInstance;
     // pull account from web3 state variable
