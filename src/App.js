@@ -116,6 +116,7 @@ class App extends Component {
         //console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
         //this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
         this.setState({ lastTx: result });
+        this.setState({ lastWinner: result.args.addr });
         console.log("event won: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
       }
     });
@@ -140,7 +141,7 @@ class App extends Component {
     //console.log('loser count: ', this.state.loserCount);
     //console.log('last win at: ', this.state.lastWinnerAt);
     //console.log('last winner: ', this.state.winner);
-    console.log('last result: ', this.state.lastTx);
+    //console.log('last result: ', this.state.lastTx);
     // save to seperate variable
     const contractInstance = this.state.ContractInstance;
     // pull account from web3 state variable
