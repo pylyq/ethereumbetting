@@ -20,7 +20,7 @@ class App extends Component {
       winnerCount: 0,
       //lastWinnerAt: null,
       lastWinner: null,
-      lastLog: null,
+      //lastLog: null,
     }
     // biiiiind error fixed
     this.submitBet = this.submitBet.bind(this);
@@ -97,10 +97,9 @@ class App extends Component {
     // start from this block since the first event happens shortly thereafter
     // for Ganache leave blank
     let additionalFilterOptions = {
-      //"fromBlock":"2950000"
+
     }
     // contract event definition
-    //let contractEvent = contractInstance.NewTotal(indexedEventValues, additionalFilterOptions);
     //event WinningBet(address indexed addr, string name, uint amount);
     //event LosingBet(address indexed addr, string name, uint amount);
     let winningEvent = contractInstance.WinningBet(indexedEventValues, additionalFilterOptions);
@@ -111,17 +110,15 @@ class App extends Component {
       if(error) {
         console.error('Winning Event Error');
       } else {
-        //console.log('event won');
         // figure out what to change this to later
         // set the total state variable to newly captured log
-        //console.log("event log captured: ", result.event, "value: ", (result.args.n.toNumber() / 1e10).toString());
-        //this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
         // figure out how to save whole object not just log
-        this.setState({ lastLog: result });
-        console.log('event: ',result.event);
-        console.log('args: ',result.args);
+        //this.setState({ lastLog: result });
+        //console.log('event: ',result.event);
+        //console.log('args: ',result.args);
         this.setState({ lastWinner: result.args.addr });
-        console.log("event won: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
+        //console.log("event won: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
+        this.displayResult(result);
       }
     });
 
@@ -129,23 +126,16 @@ class App extends Component {
       if(error) {
         console.error('Losing Event Error');
       } else {
-        //console.log('event lost');
         // figure out what to change this to later
         // set the total state variable to newly captured log
-        console.log("event lost: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
-        //console.log(result);
-        this.setState({ lastLog: result });
-        //this.setState({ total: (result.args.n.toNumber() / 1e10).toString() });
+        //console.log("event lost: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
+        //this.setState({ lastLog: result });
+        this.displayResult(result);
       }
     });
   }
 
   submitBet (guess, name, betValue) {
-    //console.log('winner count: ', this.state.winnerCount);
-    //console.log('loser count: ', this.state.loserCount);
-    //console.log('last win at: ', this.state.lastWinnerAt);
-    //console.log('last winner: ', this.state.winner);
-    //console.log('last result: ', this.state.lastTx);
     // save to seperate variable
     const contractInstance = this.state.ContractInstance;
     // pull account from web3 state variable
@@ -154,11 +144,11 @@ class App extends Component {
       contractInstance.guess(guess, name, { from:accounts[0], value:this.state.web3.toWei(betValue,'ether') });
     })
 
-    this.displayResult();
+    //this.displayResult();
   }
   // this will need to be called at some time other than the submitbet method
   // maybe this should just be put into the log watching method
-  displayResult () {
+  displayResult (result) {
 
     // this variable will be set to true if the last log includes the address of the person that is submitting bets
     let foundAccount = false;
@@ -168,15 +158,15 @@ class App extends Component {
       let i;
       for (i = 0; i < accounts.length; i++) {
         console.log('Account ', i, ': ',accounts[i]);
-        if (this.state.lastLog.args.addr === accounts[i]) {
+        if (result.args.addr === accounts[i]) {
           foundAccount = true;
         }
       }
       // moved from outside of current scope
-      if (this.state.lastLog.event === 'WinningBet' && foundAccount) {
+      if (result.event === 'WinningBet' && foundAccount) {
         // display that the user has won the game
         console.log('you won the last round');
-      } else if (this.state.lastLog.event === 'LosingBet' && foundAccount) {
+      } else if (result.event === 'LosingBet' && foundAccount) {
         // display that the user has lost the game
         console.log('you lost the last round');
       } else {
@@ -184,7 +174,6 @@ class App extends Component {
         console.log('figuring this out');
       }
       //console.log('account has been found? inside scope 1: ',foundAccount); reads true
-      //console.log(this.state.lastLog.event);
     })
 
     //console.log('account has been found? inside scope 2: ',foundAccount); reads false
@@ -224,7 +213,6 @@ class App extends Component {
               <p>Fusce mauris ipsum, finibus sed aliquet at, molestie quis mi. Aliquam in.</p>
               <BetInput onSubmit={ this.submitBet } />
               { this.renderLastWinner() }
-              { /*this.displayResult()*/ }
             </div>
           </div>
         </main>
