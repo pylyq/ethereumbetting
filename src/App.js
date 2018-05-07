@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import MultiNumberBettingV7Contract from '../build/contracts/MultiNumberBettingV7.json';
 import getWeb3 from './utils/getWeb3';
+
 import BetInput from './BetInput';
+import DisplayResult from './DisplayResult';
 
 import './css/oswald.css';
 import './css/open-sans.css';
@@ -21,11 +23,12 @@ class App extends Component {
       //lastWinnerAt: null,
       lastWinner: null,
       lastResult: null,
-      lastLog: null
+      lastLog: null,
+      betSubmitted: false
     }
     // biiiiind error fixed
     this.submitBet = this.submitBet.bind(this);
-    this.displayResult = this.displayResult.bind(this);
+    //this.displayResult = this.displayResult.bind(this);
   }
 
   componentWillMount() {
@@ -95,32 +98,26 @@ class App extends Component {
     let indexedEventValues = {
 
     }
-    // start from this block since the first event happens shortly thereafter
-    // for Ganache leave blank
+
     let additionalFilterOptions = {
 
     }
     // contract event definition
-    //event WinningBet(address indexed addr, string name, uint amount);
-    //event LosingBet(address indexed addr, string name, uint amount);
     let winningEvent = contractInstance.WinningBet(indexedEventValues, additionalFilterOptions);
     let losingEvent = contractInstance.LosingBet(indexedEventValues, additionalFilterOptions);
     // its catching logs other than the most recent one, dont want this
+    /*
+    Refer to InteractionChannel project to use txhash to ensure multiple logs arent recorded
+    */
 
     // web3 contract watch callback function
     winningEvent.watch((error, result) => {
       if(error) {
         console.error('Winning Event Error');
       } else {
-        // figure out what to change this to later
         // set the total state variable to newly captured log
-        // figure out how to save whole object not just log
-        //this.setState({ lastLog: result });
-        //console.log('event: ',result.event);
-        //console.log('args: ',result.args);
         this.setState({ lastWinner: result.args.addr });
         //console.log("event won: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
-        //this.displayResult(result);
         this.setState({ lastLog: result });
       }
     });
@@ -129,11 +126,8 @@ class App extends Component {
       if(error) {
         console.error('Losing Event Error');
       } else {
-        // figure out what to change this to later
-        // set the total state variable to newly captured log
+        // set the state variable to newly captured log
         //console.log("event lost: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
-        //this.setState({ lastLog: result });
-        //this.displayResult(result);
         this.setState({ lastLog: result });
       }
     });
@@ -147,48 +141,8 @@ class App extends Component {
       // call method on contract instance stored in state
       contractInstance.guess(guess, name, { from:accounts[0], value:this.state.web3.toWei(betValue,'ether') });
     })
-    // set the displayResults part to a loading screen
-    // maybe set a lastResult state variable to 'loading'
-    this.setState({ lastResult: 'loading' });
-    console.log('current last result state: ',this.state.lastResult);
-  }
-  // this will need to be called at some time other than the submitbet method
-  // maybe this should just be put into the log watching method
-  // probably need to make dedicated component
-  displayResult (result) {
-    if (result == null) {
-      return;
-    }
-    // this variable will be set to true if the last log includes the address of the person that is submitting bets
-    let foundAccount = false;
-    // pull accounts from web3 state variable
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      // loop thru all the accounts
-      let i;
-      for (i = 0; i < accounts.length; i++) {
-        console.log('Account ', i, ': ',accounts[i]);
-        if (result.args.addr === accounts[i]) {
-          foundAccount = true;
-        }
-      }
-      // moved from outside of current scope
-      if (result.event === 'WinningBet' && foundAccount) {
-        // display that the user has won the game
-        //console.log('you won the last round');
-        this.setState({ lastResult: 'win' });
-        console.log('current last result state: ',this.state.lastResult);
-      } else if (result.event === 'LosingBet' && foundAccount) {
-        // display that the user has lost the game
-        //console.log('you lost the last round');
-        this.setState({ lastResult: 'lose' });
-        console.log('current last result state: ',this.state.lastResult);
-      } else {
-        // place holder
-        //console.log('figuring this out');
-        this.setState({ lastResult: null });
-        console.log('current last result state: ',this.state.lastResult);
-      }
-    })
+    // set betSubmitted state variable to true to display bet result
+    return this.setState({ betSubmitted: true });
   }
 
   renderLastWinner () {
@@ -208,10 +162,10 @@ class App extends Component {
               <h1>Maecenas bibendum magna ac elementum</h1>
               <p>Mauris eget laoreet dolor. Praesent.</p>
               <h2>Curabitur interdum suscipit rutrum</h2>
+              { this.renderLastWinner() }
               <p>Fusce mauris ipsum, finibus sed aliquet at, molestie quis mi. Aliquam in.</p>
               <BetInput onSubmit={ this.submitBet } />
-              { this.renderLastWinner() }
-              {/* this.displayResult(this.state.lastLog) */}
+              <DisplayResult lastLog={ this.state.lastLog } betSubmitted={ this.state.betSubmitted } web3={ this.state.web3 }/>
             </div>
           </div>
         </main>

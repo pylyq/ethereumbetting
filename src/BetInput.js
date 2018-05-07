@@ -22,6 +22,7 @@ class BetInput extends Component {
 
   // passes this.state.name to parent submitName method
   submitBet(event) {
+    event.preventDefault(); //prevents the default action
     this.props.onSubmit(this.state.guess, this.state.name, this.state.betValue);
   }
   // updates state variable to match what's in the text box

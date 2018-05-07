@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import './DisplayResults.css';
+import './DisplayResult.css';
 
-class BetInput extends Component {
+class DisplayResult extends Component {
   // this component dont need state
   /*
   // Component constructor defines state and binds methods
@@ -22,59 +22,48 @@ class BetInput extends Component {
   }
   // FOR NOW ONLY HANDLE NAME INPUT
   */
-  // passes this.state.name to parent submitName method
-  submitBet(event) {
-    this.props.onSubmit(this.state.guess, this.state.name, this.state.betValue);
+  displayResult (result) {
+    if (result == null) {
+      return;
+    }
+    // this variable will be set to true if the last log includes the address of the person that is submitting bets
+    let foundAccount = false;
+    // pull accounts from web3 state variable
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      // loop thru all the accounts
+      let i;
+      for (i = 0; i < accounts.length; i++) {
+        console.log('Account ', i, ': ',accounts[i]);
+        if (result.args.addr === accounts[i]) {
+          foundAccount = true;
+        }
+      }
+      // moved from outside of current scope
+      if (result.event === 'WinningBet' && foundAccount) {
+        // display that the user has won the game
+        //console.log('you won the last round');
+        //this.setState({ lastResult: 'win' });
+        console.log('u won');
+      } else if (result.event === 'LosingBet' && foundAccount) {
+        // display that the user has lost the game
+        //console.log('you lost the last round');
+        //this.setState({ lastResult: 'lose' });
+        console.log('u lost');
+      } else {
+        // place holder
+        //console.log('figuring this out');
+        //this.setState({ lastResult: null });
+        console.log('idk');
+      }
+    })
   }
-  // updates state variable to match what's in the text box
-  handleGuessChange(event) {
-    this.setState({ guess: event.target.value });
-    //console.log('current guess:', this.state.guess);
-  }
-  // updates state variable to match what's in the text box
-  handleNameChange(event) {
-    this.setState({ name: event.target.value });
-    //console.log('current name: ', this.state.name);
-  }
-  // updates state variable to match what's in the text box
-  handleBetValueChange(event) {
-    this.setState({ betValue: event.target.value });
-    //console.log('current bet: ', this.state.betValue);
-  }
+
 
   render() {
     return (
-      <div className="MessageInput">
-        <form onSubmit={ this.submitBet }>
-          <input
-            type="text"
-            name="new-message"
-            placeholder="Enter your guess..."
-            value={ this.state.guess }
-            onChange={ this.handleGuessChange } />
-            <br />
-            <br />
-          <input
-            type="text"
-            name="new-message"
-            placeholder="Enter your name..."
-            value={ this.state.name }
-            onChange={ this.handleNameChange } />
-            <br />
-            <br />
-          <input
-            type="text"
-            name="new-message"
-            placeholder="Enter your bet value..."
-            value={ this.state.betValue }
-            onChange={ this.handleBetValueChange } />
-            <br />
-            <br />
-          <button type="submit">Submit</button>
-        </form>
-      </div>
+
     );
   }
 }
 
-export default DisplayResults;
+export default DisplayResult;
