@@ -119,7 +119,7 @@ class App extends Component {
         console.error('Winning Event Error');
       } else {
         // check that we arent setting a duplicate log
-        if (this.state.lastTx && this.state.lastTx.tx == result.transactionHash) {
+        if (this.state.lastTx && this.state.lastTx.tx === result.transactionHash) {
         //if (true) {
           // set the total state variable to newly captured log
           this.setState({ lastWinner: result.args.addr });
@@ -137,7 +137,7 @@ class App extends Component {
         console.error('Losing Event Error');
       } else {
         // check that we arent setting a duplicate log
-        if (this.state.lastTx && this.state.lastTx.tx == result.transactionHash) {
+        if (this.state.lastTx && this.state.lastTx.tx === result.transactionHash) {
         //if (true) {
           // set the state variable to newly captured log
           //console.log("event lost: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);

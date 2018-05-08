@@ -37,25 +37,32 @@ class DisplayResult extends Component {
             //this.setState({ lastResult: 'win' });
             //console.log('current last result state: ',this.state.lastResult);
             console.log("account found, bet won. tx hash: ", result.transactionHash);
+            return <h1>You won</h1>;
           } else if (result.event === 'LosingBet' && foundAccount) {
             // display that the user has lost the game
             //console.log('you lost the last round');
             //this.setState({ lastResult: 'lose' });
             //console.log('current last result state: ',this.state.lastResult);
             console.log("account found, bet lost. tx hash: ", result.transactionHash);
+            // this isnt showing up on page for some reason
+            // probably cause the tx and log hash go out of wack immediately
+            return <h1>You lost</h1>;
           } else {
             // place holder
             //console.log('figuring this out');
             //this.setState({ lastResult: null });
             //console.log('current last result state: ',this.state.lastResult);
             console.log("account not found");
+            return <h1>Huh?</h1>;
           }
         })
       }
     } else if (!result && lastTx) {
       console.log("transaction pending...");
+      return <h1>Transaction pending...</h1>;
     } else {
       console.log("bet hasnt been submitted yet");
+      return <h1>You havent submitted a bet yet</h1>;
     }
   }
 
