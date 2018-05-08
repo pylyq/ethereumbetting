@@ -22,9 +22,12 @@ class App extends Component {
       winnerCount: 0,
       //lastWinnerAt: null,
       lastWinner: null,
-      lastResult: null,
+      //lastResult: null,
+      //do we need lastLog?
       lastLog: null,
-      betSubmitted: false
+      //betSubmitted: false,
+      //lastTx replaces betSubmitted that way u can check the hash too
+      lastTx: null,
     }
     // biiiiind error fixed
     this.submitBet = this.submitBet.bind(this);
@@ -115,10 +118,17 @@ class App extends Component {
       if(error) {
         console.error('Winning Event Error');
       } else {
-        // set the total state variable to newly captured log
-        this.setState({ lastWinner: result.args.addr });
-        //console.log("event won: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
-        this.setState({ lastLog: result });
+        // check that we arent setting a duplicate log
+        if (this.state.lastTx && this.state.lastTx.tx == result.transactionHash) {
+        //if (true) {
+          // set the total state variable to newly captured log
+          this.setState({ lastWinner: result.args.addr });
+          //console.log("event won: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
+          this.setState({ lastLog: result });
+          console.log("new log received won");
+          console.log("current lastTx: ", this.state.lastTx);
+          console.log("current lastLog: ", this.state.lastLog);
+        }
       }
     });
 
@@ -126,9 +136,16 @@ class App extends Component {
       if(error) {
         console.error('Losing Event Error');
       } else {
-        // set the state variable to newly captured log
-        //console.log("event lost: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
-        this.setState({ lastLog: result });
+        // check that we arent setting a duplicate log
+        if (this.state.lastTx && this.state.lastTx.tx == result.transactionHash) {
+        //if (true) {
+          // set the state variable to newly captured log
+          //console.log("event lost: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
+          this.setState({ lastLog: result });
+          console.log("new log received lost");
+          console.log("current lastTx: ", this.state.lastTx);
+          console.log("current lastLog: ", this.state.lastLog);
+        }
       }
     });
   }
@@ -139,10 +156,17 @@ class App extends Component {
     // pull account from web3 state variable
     this.state.web3.eth.getAccounts((error, accounts) => {
       // call method on contract instance stored in state
-      contractInstance.guess(guess, name, { from:accounts[0], value:this.state.web3.toWei(betValue,'ether') });
+      contractInstance.guess(guess, name, { from:accounts[0], value:this.state.web3.toWei(betValue,'ether') }).then((result) => {
+        // maybe use this tx info in displayResult? Maybe save to state variable.
+        //console.log(result);
+        this.setState({ lastTx: result });
+        this.setState({ lastLog: null });
+      });
     })
     // set betSubmitted state variable to true to display bet result
-    return this.setState({ betSubmitted: true });
+    //this.setState({ betSubmitted: true });
+    // ???? below
+    //this.setState({ lastLog: null });
   }
 
   renderLastWinner () {
@@ -165,7 +189,7 @@ class App extends Component {
               { this.renderLastWinner() }
               <p>Fusce mauris ipsum, finibus sed aliquet at, molestie quis mi. Aliquam in.</p>
               <BetInput onSubmit={ this.submitBet } />
-              <DisplayResult lastLog={ this.state.lastLog } betSubmitted={ this.state.betSubmitted } web3={ this.state.web3 }/>
+              <DisplayResult lastLog={ this.state.lastLog } lastTx={ this.state.lastTx } web3={ this.state.web3 }/>
             </div>
           </div>
         </main>
