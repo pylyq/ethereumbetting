@@ -28,6 +28,7 @@ class App extends Component {
       //betSubmitted: false,
       //lastTx replaces betSubmitted that way u can check the hash too
       lastTx: null,
+      betResult: null
     }
     // biiiiind error fixed
     this.submitBet = this.submitBet.bind(this);
@@ -189,7 +190,7 @@ class App extends Component {
               { this.renderLastWinner() }
               <p>Fusce mauris ipsum, finibus sed aliquet at, molestie quis mi. Aliquam in.</p>
               <BetInput onSubmit={ this.submitBet } />
-              <DisplayResult lastLog={ this.state.lastLog } lastTx={ this.state.lastTx } web3={ this.state.web3 }/>
+              <DisplayResult log={ this.state.lastLog } tx={ this.state.lastTx } web3={ this.state.web3 } />
             </div>
           </div>
         </main>
