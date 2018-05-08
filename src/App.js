@@ -16,23 +16,15 @@ class App extends Component {
 
     this.state = {
       ContractInstance: null,
-      //storageValue: 0,
       web3: null,
       loserCount: 0,
       winnerCount: 0,
-      //lastWinnerAt: null,
       lastWinner: null,
-      //lastResult: null,
-      //do we need lastLog?
       lastLog: null,
-      //betSubmitted: false,
-      //lastTx replaces betSubmitted that way u can check the hash too
       lastTx: null,
-      betResult: null
     }
     // biiiiind error fixed
     this.submitBet = this.submitBet.bind(this);
-    //this.displayResult = this.displayResult.bind(this);
   }
 
   componentWillMount() {
@@ -109,10 +101,6 @@ class App extends Component {
     // contract event definition
     let winningEvent = contractInstance.WinningBet(indexedEventValues, additionalFilterOptions);
     let losingEvent = contractInstance.LosingBet(indexedEventValues, additionalFilterOptions);
-    // its catching logs other than the most recent one, dont want this
-    /*
-    Refer to InteractionChannel project to use txhash to ensure multiple logs arent recorded
-    */
 
     // web3 contract watch callback function
     winningEvent.watch((error, result) => {
@@ -121,14 +109,11 @@ class App extends Component {
       } else {
         // check that we arent setting a duplicate log
         if (this.state.lastTx && this.state.lastTx.tx === result.transactionHash) {
-        //if (true) {
           // set the total state variable to newly captured log
           this.setState({ lastWinner: result.args.addr });
           //console.log("event won: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
           this.setState({ lastLog: result });
-          console.log("new log received won");
-          console.log("current lastTx: ", this.state.lastTx);
-          console.log("current lastLog: ", this.state.lastLog);
+
         }
       }
     });
@@ -139,13 +124,9 @@ class App extends Component {
       } else {
         // check that we arent setting a duplicate log
         if (this.state.lastTx && this.state.lastTx.tx === result.transactionHash) {
-        //if (true) {
           // set the state variable to newly captured log
           //console.log("event lost: ", result.event, "address: ", result.args.addr, "name: ", result.args.name, "amount: ", result.args.amount.toNumber() / 1000000000000000000);
           this.setState({ lastLog: result });
-          console.log("new log received lost");
-          console.log("current lastTx: ", this.state.lastTx);
-          console.log("current lastLog: ", this.state.lastLog);
         }
       }
     });
@@ -158,16 +139,11 @@ class App extends Component {
     this.state.web3.eth.getAccounts((error, accounts) => {
       // call method on contract instance stored in state
       contractInstance.guess(guess, name, { from:accounts[0], value:this.state.web3.toWei(betValue,'ether') }).then((result) => {
-        // maybe use this tx info in displayResult? Maybe save to state variable.
-        //console.log(result);
+        // reset the lastLog state variable once transaction is submitted and save transaction
         this.setState({ lastTx: result });
         this.setState({ lastLog: null });
       });
     })
-    // set betSubmitted state variable to true to display bet result
-    //this.setState({ betSubmitted: true });
-    // ???? below
-    //this.setState({ lastLog: null });
   }
 
   renderLastWinner () {
