@@ -154,17 +154,17 @@ class App extends Component {
     return (
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Lorem ipsum dolor ΞTH ÐApp Holla</a>
+            <a href="#" className="pure-menu-heading pure-menu-link">Minimal Betting ΞTH ÐApp</a>
         </nav>
 
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
-              <h1>Maecenas bibendum magna ac elementum</h1>
-              <p>Mauris eget laoreet dolor. Praesent.</p>
-              <h2>Curabitur interdum suscipit rutrum</h2>
+              <h1>Bet any number you like between 1 and 10.</h1>
+              <p>Preferably not 2, 3, or 4.</p>
+              <h2>Since those are the ones that will win you the bet and this contract wont be deployed with a lot of ether.</h2>
               { this.renderLastWinner() }
-              <p>Fusce mauris ipsum, finibus sed aliquet at, molestie quis mi. Aliquam in.</p>
+              <p>Fusce mauris ipsum, finibus sed aliquet at, molestie quis mi. Aliquam in. Indeed.</p>
               <BetInput onSubmit={ this.submitBet } />
               <DisplayResult log={ this.state.lastLog } tx={ this.state.lastTx } web3={ this.state.web3 } />
             </div>
