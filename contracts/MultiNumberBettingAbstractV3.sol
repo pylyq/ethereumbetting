@@ -20,8 +20,8 @@ contract MultiNumberBettingAbstractV3 {
   uint public constant MIN_BET = 1 ether;
 
   // event NewHighBid(address indexed who, string name, uint howmuch);
-  event WinningBet(address indexed addr, string name, uint amount);
-  event LosingBet(address indexed addr, string name, uint amount);
+  event WinningBet(address indexed addr, string name, uint amount, uint256 time);
+  event LosingBet(address indexed addr, string name, uint amount, uint256 time);
 
   function guess(uint8 guess, string name) payable returns (bool);
 

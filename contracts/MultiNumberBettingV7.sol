@@ -83,14 +83,14 @@ contract MultiNumberBettingV7 is MultiNumberBettingAbstractV3 {
         // emit WinningBet event
         // emit NewHighBid(msg.sender, name, msg.value)
         // event WinningBet(address indexed winner, string name, uint amount)
-        emit WinningBet(msg.sender, name, msg.value);
+        emit WinningBet(msg.sender, name, msg.value, wnnr.guessedAt);
 
         return true;
       } else {
         loserCount++;
         //emit LosingBet event
         // event LosingBet(address indexed loser, string name, uint amount)
-        emit LosingBet(msg.sender, name, msg.value);
+        emit LosingBet(msg.sender, name, msg.value, wnnr.guessedAt);
 
         return false;
       }

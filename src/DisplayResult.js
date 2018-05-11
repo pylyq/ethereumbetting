@@ -3,6 +3,25 @@ import './DisplayResult.css';
 
 class DisplayResult extends Component {
   // this component dont need state
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      lastDate: 'N/A',
+      result: ''
+    }
+    // biiiiind
+  }
+  //componentWillMount() {
+    //this.getTime();
+    //this.displayResult(this.props.log, this.props.tx, this.props.web3);
+  //}
+
+  //componentWillUpdate() {
+    //this.getTime();
+    //this.displayResult(this.props.log, this.props.tx, this.props.web3);
+//  }
+
   displayResult (result, lastTx, web3) {
     // ensure the last tx and last log refer to the same transaction
     if (result && lastTx && result.transactionHash === lastTx.tx) {
@@ -21,7 +40,7 @@ class DisplayResult extends Component {
       if (result.event === 'WinningBet' && foundAccount) {
         // display that the user has won the game
         console.log("account found, bet won. tx hash: ", result.transactionHash);
-        console.log("transaction object: ", lastTx);
+        //console.log("transaction object: ", lastTx);
         return <h1>w00t u won.</h1>;
       } else if (result.event === 'LosingBet' && foundAccount) {
         // display that the user has lost the game
@@ -39,16 +58,99 @@ class DisplayResult extends Component {
     } else {
       console.log("bet hasnt been submitted yet");
       return <h1>You havent submitted a bet yet ya dingus</h1>;
+      //this.setState({ lastDate: <h1>You havent submitted a bet yet ya dingus</h1> });
     }
   }
+
   // method to convert unix/block time to human readable format
-  getTime(web3) {
-    /*
-    > web3.eth.getTransaction("0x5da2844afb6826d4baed6ad7e8b536c00cbc921ac147773ad056f29f2e7c1762").blockNumber
-    1920050
-    > web3.eth.getBlock(1920050).timestamp
-    1469021581
-    */
+  getTime() {
+    //let dateString;
+    //function to get time from transaction hash
+    function getTimeFromTx (tx, web3) {
+      web3.eth.getTransaction(tx, (error, result) => {
+        let blockNo = result.blockNumber;
+        web3.eth.getBlock(blockNo, (error, result) => {
+          let timeStamp = result.timestamp;
+          let date = new Date(timeStamp * 1000);
+          console.log('inside scope of function', date.toString());
+          return date.toString();
+          this.setState({ lastDate: date.toString() });
+        })
+      })
+    }
+
+    //function myCallback (input) {
+      //dateString = input;
+    //}
+
+    if (this.props.web3 && this.props.tx) {
+      getTimeFromTx (this.props.tx.tx, this.props.web3);
+
+      //let dateString;
+      /*
+      // try a promise
+      let getTimeFromTx = new Promise((resolve, reject) => {
+        this.props.web3.eth.getTransaction(this.props.tx.tx, (error, result) => {
+          let blockNo = result.blockNumber;
+          this.props.web3.eth.getBlock(blockNo, (error, result) => {
+            let timeStamp = result.timestamp;
+            let date = new Date(timeStamp * 1000);
+            console.log('inside scope of function', date.toString());
+            resolve(date.toString());
+          })
+        })
+      })
+
+      return getTimeFromTx.then(results => {
+        return dateString = results;
+      })
+*/
+      //return dateString;
+
+    } else {
+      this.setState({ lastDate: 'N/A' });
+    }
+      //same here
+      //let timeStamp = this.props.web3.eth.getBlock(blockNo).timestamp;
+      //let timeStamp;
+      //this.props.web3.eth.getBlock(blockNo, (error, result) => {
+        //let timeStamp = result.timestamp;
+        //callback(timeStamp)
+    //  })
+
+      //let date = new Date(timeStamp * 1000);
+      // convert to string
+      //dateString = date.toString();
+    //} else {
+      //dateString = 'N/A';
+    //}
+    //console.log('within getTime method, lastTx: ', this.props.tx);
+    //console.log('within getTime method, web3: ', this.props.web3);
+    //return dateString;
+  }
+  getTime2() {
+    //let dateString;
+    //function to get time from transaction hash
+    function getTimeFromTx (tx, web3) {
+      web3.eth.getTransaction(tx, (error, result) => {
+        let blockNo = result.blockNumber;
+        web3.eth.getBlock(blockNo, (error, result) => {
+          let timeStamp = result.timestamp;
+          let date = new Date(timeStamp * 1000);
+          console.log('inside scope of function', date.toString());
+          return date.toString();
+          this.setState({ lastDate: date.toString() });
+        })
+      })
+    }
+
+    //function myCallback (input) {
+      //dateString = input;
+    //}
+
+
+      getTimeFromTx (this.props.tx.tx, this.props.web3);
+
   }
   // method to determine address to display
   getAddr() {
@@ -59,17 +161,6 @@ class DisplayResult extends Component {
       addy = 'N/A'
     }
     return addy;
-  }
-  // method to determine guess to display
-  getGuess() {
-    // can this data even be retrieved??
-    let guess;
-    if (this.props.log) {
-      guess = this.props.log.args.guess;
-    } else {
-      guess = 'N/A'
-    }
-    return guess;
   }
   // method to determine value to display
   getWager() {
@@ -93,13 +184,14 @@ class DisplayResult extends Component {
   }
 
   render() {
+    { this.props.tx && this.props.web3 ? this.getTime2 : '' }
     return (
       <div className="DisplayResult">
         { this.displayResult(this.props.log, this.props.tx, this.props.web3) }
+        {/* this.getTime() */}
         <p>Your address: { this.getAddr() }</p>
-        <p>Date of bet: { this.getTime(this.props.web3) }</p>
+        <p>Date of bet: { this.state.lastDate }</p>
         <p>Your name: { this.getName() }</p>
-        <p>Your guess: { /*this.getGuess() */}</p>
         <p>Your wager: { this.getWager() } ETH</p>
       </div>
     );
