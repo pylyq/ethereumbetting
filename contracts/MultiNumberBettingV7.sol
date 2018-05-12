@@ -16,7 +16,8 @@ MultiNumberBettingV7
 Update the guess() method to emit appropriate events
 */
 
-contract MultiNumberBettingV7 is MultiNumberBettingAbstractV3 {
+contract MultiNumberBettingV7 {
+//contract MultiNumberBettingV7 is MultiNumberBettingAbstractV3 {
 
   uint8 public loserCount = 0;
   uint8 public winnerCount = 0;
@@ -24,6 +25,12 @@ contract MultiNumberBettingV7 is MultiNumberBettingAbstractV3 {
   uint8[] arr;
   address public winner;
   address public owner;
+  // moved from abstract file
+  uint public constant MAX_BET = 5 ether;
+  uint public constant MIN_BET = 1 ether;
+
+  event WinningBet(address indexed addr, string name, uint amount, uint256 time);
+  event LosingBet(address indexed addr, string name, uint amount, uint256 time);
   // Winner
   struct Winner {
     address winnerAddress;
